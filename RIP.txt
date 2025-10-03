@@ -1,0 +1,190 @@
+Routed -> carriers the data
+Routing -> which shows you best path
+Routing Protocols types:
+1. IGPs -> interior gateway protocols
+USE: Used within a single organization(Autonomous system)
+	Two state of IGPS:
+	1. Link state (routers share info about their directly connected links, build a complete topology map and calculate best path using Dijkstra's algorithm)
+		OSPF(Open Shortest Path First)
+		IS-IS (Intermediate system-to-intermediate system)
+	2. Distance Vector (choose paths based on hop count(distance), Periodically share the entire routing table with neighbors)
+		RIP(Routing information Protocol)
+		IGRP(Interior Gateway Routing Protocol)
+2. EGPs -> exterior gateway protocols 
+USE: Used between different organizations(Autonomous systems)
+	One state of EGPs:
+	1. BGP (border gateway protocols - backbone of the internet)
+
+3. EIGRP(Enhanced Interior Gateway Routing Protocol)
+	combine features of both Distance vector & Link-state
+------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------
+# ON ALL ROUTERS:
+show ip route (C)
+
+config t
+router rip
+network ______	(C)
+network ______	(C)
+exit
+---------------------------------------
+LAB PRACTICE:
+---------------------------------------------------------------------------
+R1>en
+R1#config t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R1(config)#interface fas
+R1(config)#interface fastEthernet 0/0
+R1(config-if)#ip address 1.1.1.1 255.0.0.0
+R1(config-if)#no shut
+
+R1(config-if)#
+%LINK-5-CHANGED: Interface FastEthernet0/0, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/0, changed state to up
+
+R1(config-if)#exit
+R1(config)#interface fastEthernet 0/1
+R1(config-if)#ip address 150.1.1.1 255.255.0.0
+R1(config-if)#no shut
+
+R1(config-if)#
+%LINK-5-CHANGED: Interface FastEthernet0/1, changed state to up
+
+R1(config-if)#exit
+R1(config)#
+
+R1#show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2, E - EGP
+       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+       * - candidate default, U - per-user static route, o - ODR
+       P - periodic downloaded static route
+
+Gateway of last resort is not set
+
+     1.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C       1.0.0.0/8 is directly connected, FastEthernet0/0
+L       1.1.1.1/32 is directly connected, FastEthernet0/0
+     150.1.0.0/16 is variably subnetted, 2 subnets, 2 masks
+C       150.1.0.0/16 is directly connected, FastEthernet0/1
+L       150.1.1.1/32 is directly connected, FastEthernet0/1
+
+R1#config t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R1(config)#router rip
+R1(config-router)#network 1.0.0.0
+R1(config-router)#network 150.1.0.0
+R1(config-router)#exit
+R1(config)#
+--------------------------------------------------------------
+R2>
+R2>en
+R2#config t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R2(config)#interface fast
+R2(config)#interface fastEthernet 0/0
+R2(config-if)#ip add
+R2(config-if)#ip address 1.1.1.2 255.0.0.0
+R2(config-if)#no shut
+
+R2(config-if)#
+%LINK-5-CHANGED: Interface FastEthernet0/0, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/0, changed state to up
+
+R2(config-if)#exit
+R2(config)#interface fas
+R2(config)#interface fastEthernet 0/1
+R2(config-if)#ip address 2.1.1.1 255.0.0.0
+R2(config-if)#no shut
+
+R2(config-if)#
+%LINK-5-CHANGED: Interface FastEthernet0/1, changed state to up
+
+R2(config-if)#exit
+
+R2>show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2, E - EGP
+       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+       * - candidate default, U - per-user static route, o - ODR
+       P - periodic downloaded static route
+
+Gateway of last resort is not set
+
+     1.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C       1.0.0.0/8 is directly connected, FastEthernet0/0
+L       1.1.1.2/32 is directly connected, FastEthernet0/0
+     2.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C       2.0.0.0/8 is directly connected, FastEthernet0/1
+L       2.1.1.1/32 is directly connected, FastEthernet0/1
+
+R2>en
+R2#config t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R2(config)#router rip
+R2(config-router)#network 1.0.0.0 
+R2(config-router)#network 2.0.0.0 
+R2(config-router)#exit
+R2(config)#
+------------------------------------------------------------------
+Router>en
+Router#config t
+Enter configuration commands, one per line.  End with CNTL/Z.
+Router(config)#hostname R3
+R3(config)#interface fast
+R3(config)#interface fastEthernet 0/1
+R3(config-if)#ip add
+R3(config-if)#ip address 2.1.1.2 255.0.0.0
+R3(config-if)#no shut
+
+R3(config-if)#
+%LINK-5-CHANGED: Interface FastEthernet0/1, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/1, changed state to up
+
+R3(config-if)#exit
+R3(config)#interface fastEthernet 0/0
+R3(config-if)#ip address 200.1.1.1 255.255.255.0
+R3(config-if)#no shut
+
+R3(config-if)#
+%LINK-5-CHANGED: Interface FastEthernet0/0, changed state to up
+
+%LINEPROTO-5-UPDOWN: Line protocol on Interface FastEthernet0/0, changed state to up
+
+R3(config-if)#exit
+R3(config)#
+
+R3#show ip route
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2, E - EGP
+       i - IS-IS, L1 - IS-IS level-1, L2 - IS-IS level-2, ia - IS-IS inter area
+       * - candidate default, U - per-user static route, o - ODR
+       P - periodic downloaded static route
+
+Gateway of last resort is not set
+
+     2.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C       2.0.0.0/8 is directly connected, FastEthernet0/1
+L       2.1.1.2/32 is directly connected, FastEthernet0/1
+     200.1.1.0/24 is variably subnetted, 2 subnets, 2 masks
+C       200.1.1.0/24 is directly connected, FastEthernet0/0
+L       200.1.1.1/32 is directly connected, FastEthernet0/0
+
+R3#config t
+Enter configuration commands, one per line.  End with CNTL/Z.
+R3(config)#router rip
+R3(config-router)#network 2.0.0.0
+R3(config-router)#network 200.1.1.0
+R3(config-router)#exit
+R3(config)#
+-----------------------------------------------------------------
+
